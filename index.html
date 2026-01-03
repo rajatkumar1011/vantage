@@ -1,0 +1,402 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, ArrowRight, Pause, MousePointer2, Menu, X, ExternalLink, ChevronDown } from 'lucide-react';
+
+/**
+ * VANTAGE // MOTION PORTFOLIO
+ * High-end aesthetic with physics-based interactions and smooth rendering.
+ */
+
+const Portfolio = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [scrolled, setScrolled] = useState(false);
+  const [activeVideo, setActiveVideo] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Smooth scroll & mouse tracking
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Use requestAnimationFrame for 60fps cursor update
+      requestAnimationFrame(() => {
+        setMousePos({ x: e.clientX, y: e.clientY });
+      });
+    };
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const projects = [
+    {
+      id: 1,
+      title: "LX-500 LAUNCH",
+      client: "APEX MOTORS",
+      type: "Automotive CGI",
+      desc: "Full CG environment and vehicle rendering for global broadcast.",
+      color: "from-blue-900 to-cyan-900",
+      videoType: "scan"
+    },
+    {
+      id: 2,
+      title: "NEURAL LINK",
+      client: "CYBERDYNE",
+      type: "UI/HUD Design",
+      desc: "Fictional interface design for sci-fi feature film.",
+      color: "from-emerald-900 to-teal-900",
+      videoType: "grid"
+    },
+    {
+      id: 3,
+      title: "VELOCITY",
+      client: "NIKE",
+      type: "Kinetic Typography",
+      desc: "High-energy text animation system for campaign rollout.",
+      color: "from-red-900 to-orange-900",
+      videoType: "pulse"
+    },
+    {
+      id: 4,
+      title: "QUANTUM",
+      client: "IBM",
+      type: "Abstract Data",
+      desc: "Visualizing quantum computing states for keynote presentation.",
+      color: "from-purple-900 to-indigo-900",
+      videoType: "orbit"
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden selection:bg-white selection:text-black font-sans cursor-none">
+      
+      {/* Custom Cursor / Spotlight Effect */}
+      <div 
+        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40 mix-blend-screen"
+        style={{
+          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(100,100,100,0.15), transparent 40%)`
+        }}
+      />
+      <div 
+        className="fixed pointer-events-none z-50 w-8 h-8 border border-white/30 rounded-full -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 ease-out mix-blend-difference"
+        style={{ left: mousePos.x, top: mousePos.y }}
+      >
+        <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
+      </div>
+
+      {/* Navigation */}
+      <nav className={`fixed w-full z-40 transition-all duration-500 ${scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/5 py-4' : 'py-8'}`}>
+        <div className="container mx-auto px-6 flex justify-between items-center">
+          <div className="text-2xl font-bold tracking-[0.2em] uppercase mix-blend-difference">
+            Vantage<span className="text-red-500">.</span>
+          </div>
+          
+          <div className="hidden md:flex space-x-12 text-xs font-bold tracking-[0.15em] uppercase text-gray-400">
+            {['Work', 'Studio', 'Showreel', 'Contact'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-white transition-colors duration-300 relative group">
+                {item}
+                <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+              </a>
+            ))}
+          </div>
+
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white">
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-30 bg-black flex flex-col justify-center items-center space-y-8 md:hidden">
+          {['Work', 'Studio', 'Showreel', 'Contact'].map((item) => (
+            <a 
+              key={item} 
+              href={`#${item.toLowerCase()}`} 
+              onClick={() => setMenuOpen(false)}
+              className="text-3xl font-bold tracking-widest uppercase text-white/80 hover:text-white"
+            >
+              {item}
+            </a>
+          ))}
+        </div>
+      )}
+
+      {/* Hero Section */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+        
+        {/* Animated Background Mesh */}
+        <div className="absolute inset-0 opacity-20 perspective-1000">
+          <div className="absolute bottom-[-20%] left-[-20%] w-[140%] h-[100%] bg-gradient-to-t from-red-900/20 to-transparent transform rotate-x-60 animate-pulse"></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10 text-center">
+          <div className="overflow-hidden mb-4">
+            <h2 className="text-red-500 font-bold tracking-[0.5em] text-sm md:text-base uppercase animate-slide-up">
+              Motion Design Studio
+            </h2>
+          </div>
+          <div className="overflow-hidden">
+            <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter uppercase mb-6 leading-none mix-blend-overlay opacity-90 animate-reveal">
+              Absolute<br />Precision
+            </h1>
+          </div>
+          <p className="max-w-md mx-auto text-gray-400 text-sm md:text-base leading-relaxed tracking-wide animate-fade-in delay-300">
+            Crafting high-fidelity motion graphics for the world's most demanding automotive and technology brands.
+          </p>
+
+          <div className="mt-12 animate-fade-in delay-500">
+            <button className="group relative px-8 py-3 bg-white text-black font-bold uppercase tracking-widest text-xs overflow-hidden">
+              <span className="relative z-10 group-hover:text-white transition-colors duration-300">View Showreel</span>
+              <div className="absolute inset-0 bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            </button>
+          </div>
+        </div>
+
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce duration-[2000ms]">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-2">Scroll</span>
+          <ChevronDown size={16} className="text-gray-500" />
+        </div>
+      </section>
+
+      {/* Selected Work */}
+      <section id="work" className="py-32 relative bg-[#0a0a0a]">
+        <div className="container mx-auto px-6">
+          <div className="flex items-end justify-between mb-20 border-b border-white/10 pb-6">
+            <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600">
+              Selected Work
+            </h2>
+            <span className="text-xs font-mono text-gray-500 mb-2 hidden md:block">
+              // 2023 — 2025
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-y-24">
+            {projects.map((project, index) => (
+              <div 
+                key={project.id}
+                className={`group relative ${index % 2 !== 0 ? 'md:mt-24' : ''}`}
+                onMouseEnter={() => setActiveVideo(project.id)}
+                onMouseLeave={() => setActiveVideo(null)}
+              >
+                {/* Project Card / Viewport */}
+                <div className="relative aspect-[16/9] bg-gray-900 overflow-hidden border border-white/5 transition-all duration-500 group-hover:border-red-500/50 group-hover:shadow-[0_0_30px_rgba(220,38,38,0.1)]">
+                  
+                  {/* Default Static State (Simulated Thumbnail) */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-20 group-hover:opacity-0 transition-opacity duration-500`}></div>
+                  
+                  {/* "Video" Playback Simulation - CSS Animations */}
+                  <div className={`absolute inset-0 flex items-center justify-center bg-black transition-opacity duration-500 ${activeVideo === project.id ? 'opacity-100' : 'opacity-0'}`}>
+                    
+                    {/* Simulated Reel Content */}
+                    {project.videoType === 'scan' && (
+                      <div className="relative w-full h-full overflow-hidden">
+                        <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,255,255,0.05)_50%)] bg-[length:100%_4px]"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 border-2 border-cyan-500/30 rounded-full animate-[spin_4s_linear_infinite]"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 border border-cyan-500/50 rounded-full animate-[ping_2s_linear_infinite]"></div>
+                        <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.8)] animate-[scan_2s_linear_infinite]"></div>
+                      </div>
+                    )}
+                    
+                    {project.videoType === 'grid' && (
+                      <div className="relative w-full h-full overflow-hidden perspective-1000 bg-emerald-900/10">
+                        <div className="absolute inset-0 grid grid-cols-6 grid-rows-4 gap-1 opacity-20">
+                           {Array(24).fill(0).map((_, i) => (
+                             <div key={i} className="bg-emerald-500/20 animate-pulse" style={{animationDelay: `${i * 0.1}s`}}></div>
+                           ))}
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                           <div className="w-48 h-12 border-x-2 border-emerald-400 flex items-center justify-center">
+                              <span className="font-mono text-emerald-400 text-xs tracking-widest animate-pulse">SYSTEM_LOCKED</span>
+                           </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {project.videoType === 'pulse' && (
+                      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-red-900/10">
+                        <h3 className="text-9xl font-black text-transparent bg-clip-text bg-white stroke-2 opacity-10 absolute scale-150 animate-[pulse_0.5s_ease-in-out_infinite]">RUN</h3>
+                         <div className="absolute w-[200%] h-[20px] bg-red-600 rotate-45 translate-x-[-100%] animate-[slide_1s_linear_infinite]"></div>
+                      </div>
+                    )}
+
+                     {project.videoType === 'orbit' && (
+                      <div className="relative w-full h-full flex items-center justify-center bg-indigo-900/10">
+                         <div className="w-32 h-32 border border-indigo-500/30 rounded-full animate-[spin_8s_linear_infinite] flex items-center justify-center">
+                            <div className="w-20 h-20 border border-indigo-400/50 rotate-45 rounded-sm animate-[spin_4s_linear_infinite_reverse]"></div>
+                         </div>
+                         <div className="absolute w-2 h-2 bg-indigo-400 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-[0_0_20px_rgba(129,140,248,1)]"></div>
+                      </div>
+                    )}
+
+                  </div>
+
+                  {/* Overlay UI */}
+                  <div className="absolute top-6 right-6 z-20 mix-blend-difference">
+                    <span className="font-mono text-xs border border-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+                      0{index + 1}
+                    </span>
+                  </div>
+                  
+                  <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${activeVideo === project.id ? 'opacity-0' : 'opacity-100'}`}>
+                    <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform duration-500">
+                      <Play size={20} className="ml-1 text-white/80" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Info */}
+                <div className="mt-6 flex justify-between items-start">
+                  <div>
+                    <h3 className="text-2xl font-bold uppercase tracking-wide mb-1 group-hover:text-red-500 transition-colors duration-300">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 font-mono uppercase tracking-widest mb-3">
+                      {project.client} // {project.type}
+                    </p>
+                  </div>
+                  <div className={`transform transition-all duration-300 ${activeVideo === project.id ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`}>
+                    <ArrowRight className="text-red-500" />
+                  </div>
+                </div>
+                <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500 ease-in-out">
+                  <p className="text-sm text-gray-400 mt-2 max-w-sm border-l border-red-500/30 pl-3 leading-relaxed">
+                    {project.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-32 text-center">
+            <a href="#" className="inline-flex items-center space-x-2 text-sm uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors pb-1 border-b border-transparent hover:border-red-500">
+              <span>View All Projects</span>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Philosophy / About */}
+      <section id="studio" className="py-32 bg-white text-black relative">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-4">
+              <h2 className="text-xl font-bold uppercase tracking-widest mb-8 border-l-4 border-black pl-4">
+                The Studio
+              </h2>
+            </div>
+            <div className="lg:col-span-8">
+              <p className="text-3xl md:text-5xl font-bold leading-tight mb-12 tracking-tight">
+                We bridge the gap between cinematic realism and digital interface. Our work is not just seen; it is felt.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-gray-600">
+                <div>
+                  <h4 className="font-bold text-black uppercase tracking-widest mb-4">Approach</h4>
+                  <p>
+                    Every frame is treated as a still photograph. We apply the principles of traditional cinematography—lighting, lens choice, and composition—to the infinite possibilities of the 3D canvas.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-black uppercase tracking-widest mb-4">Capabilities</h4>
+                  <ul className="space-y-2 border-l border-gray-200 pl-4">
+                    <li>3D Motion Design</li>
+                    <li>Automotive Visualization</li>
+                    <li>HMI / UI Design</li>
+                    <li>Event Graphics</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer id="contact" className="py-24 bg-black border-t border-white/10">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end">
+            <div className="mb-12 md:mb-0">
+              <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white/90 mb-6">
+                Let's<br />Create
+              </h2>
+              <a href="mailto:hello@vantage.studio" className="text-xl md:text-2xl text-red-500 font-mono hover:text-white transition-colors">
+                hello@vantage.studio
+              </a>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-12 text-xs uppercase tracking-widest text-gray-500">
+              <div>
+                <h5 className="text-white mb-4">Social</h5>
+                <ul className="space-y-2">
+                  <li className="hover:text-red-500 cursor-pointer transition-colors">Instagram</li>
+                  <li className="hover:text-red-500 cursor-pointer transition-colors">Behance</li>
+                  <li className="hover:text-red-500 cursor-pointer transition-colors">Vimeo</li>
+                </ul>
+              </div>
+              <div>
+                <h5 className="text-white mb-4">Legal</h5>
+                <ul className="space-y-2">
+                  <li className="hover:text-white cursor-pointer">Impressum</li>
+                  <li className="hover:text-white cursor-pointer">Privacy</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-24 pt-8 border-t border-white/5 flex justify-between items-center text-[10px] text-gray-600 uppercase tracking-widest">
+            <span>© 2025 Vantage Motion Studio</span>
+            <span>Mumbai, IN</span>
+          </div>
+        </div>
+      </footer>
+
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes scan {
+          0% { top: 0; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+        @keyframes slide {
+          0% { transform: translateX(-100%) rotate(45deg); }
+          100% { transform: translateX(100%) rotate(45deg); }
+        }
+        @keyframes reveal {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 0.9; transform: translateY(0); }
+        }
+        @keyframes slide-up {
+          0% { transform: translateY(100%); }
+          100% { transform: translateY(0); }
+        }
+        @keyframes fade-in {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+        .rotate-x-60 {
+          transform: rotateX(60deg);
+        }
+        ::selection {
+          background-color: #dc2626;
+          color: white;
+        }
+        html {
+          scroll-behavior: smooth;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default Portfolio;
