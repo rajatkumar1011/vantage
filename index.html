@@ -1,402 +1,611 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Play, ArrowRight, Pause, MousePointer2, Menu, X, ExternalLink, ChevronDown } from 'lucide-react';
-
-/**
- * VANTAGE // MOTION PORTFOLIO
- * High-end aesthetic with physics-based interactions and smooth rendering.
- */
-
-const Portfolio = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [scrolled, setScrolled] = useState(false);
-  const [activeVideo, setActiveVideo] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  // Smooth scroll & mouse tracking
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      // Use requestAnimationFrame for 60fps cursor update
-      requestAnimationFrame(() => {
-        setMousePos({ x: e.clientX, y: e.clientY });
-      });
-    };
-
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const projects = [
-    {
-      id: 1,
-      title: "LX-500 LAUNCH",
-      client: "APEX MOTORS",
-      type: "Automotive CGI",
-      desc: "Full CG environment and vehicle rendering for global broadcast.",
-      color: "from-blue-900 to-cyan-900",
-      videoType: "scan"
-    },
-    {
-      id: 2,
-      title: "NEURAL LINK",
-      client: "CYBERDYNE",
-      type: "UI/HUD Design",
-      desc: "Fictional interface design for sci-fi feature film.",
-      color: "from-emerald-900 to-teal-900",
-      videoType: "grid"
-    },
-    {
-      id: 3,
-      title: "VELOCITY",
-      client: "NIKE",
-      type: "Kinetic Typography",
-      desc: "High-energy text animation system for campaign rollout.",
-      color: "from-red-900 to-orange-900",
-      videoType: "pulse"
-    },
-    {
-      id: 4,
-      title: "QUANTUM",
-      client: "IBM",
-      type: "Abstract Data",
-      desc: "Visualizing quantum computing states for keynote presentation.",
-      color: "from-purple-900 to-indigo-900",
-      videoType: "orbit"
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden selection:bg-white selection:text-black font-sans cursor-none">
-      
-      {/* Custom Cursor / Spotlight Effect */}
-      <div 
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40 mix-blend-screen"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(100,100,100,0.15), transparent 40%)`
-        }}
-      />
-      <div 
-        className="fixed pointer-events-none z-50 w-8 h-8 border border-white/30 rounded-full -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 ease-out mix-blend-difference"
-        style={{ left: mousePos.x, top: mousePos.y }}
-      >
-        <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
-      </div>
-
-      {/* Navigation */}
-      <nav className={`fixed w-full z-40 transition-all duration-500 ${scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/5 py-4' : 'py-8'}`}>
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="text-2xl font-bold tracking-[0.2em] uppercase mix-blend-difference">
-            Vantage<span className="text-red-500">.</span>
-          </div>
-          
-          <div className="hidden md:flex space-x-12 text-xs font-bold tracking-[0.15em] uppercase text-gray-400">
-            {['Work', 'Studio', 'Showreel', 'Contact'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-white transition-colors duration-300 relative group">
-                {item}
-                <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-red-500 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-            ))}
-          </div>
-
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white">
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-30 bg-black flex flex-col justify-center items-center space-y-8 md:hidden">
-          {['Work', 'Studio', 'Showreel', 'Contact'].map((item) => (
-            <a 
-              key={item} 
-              href={`#${item.toLowerCase()}`} 
-              onClick={() => setMenuOpen(false)}
-              className="text-3xl font-bold tracking-widest uppercase text-white/80 hover:text-white"
-            >
-              {item}
-            </a>
-          ))}
-        </div>
-      )}
-
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANTAGE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cursor-size: 20px;
+            --primary: #ff1a1a;
+            --bg: #050505;
+        }
         
-        {/* Animated Background Mesh */}
-        <div className="absolute inset-0 opacity-20 perspective-1000">
-          <div className="absolute bottom-[-20%] left-[-20%] w-[140%] h-[100%] bg-gradient-to-t from-red-900/20 to-transparent transform rotate-x-60 animate-pulse"></div>
+        body {
+            background-color: var(--bg);
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor */
+        }
+
+        h1, h2, h3, .brand {
+            font-family: 'Syncopate', sans-serif;
+        }
+
+        /* Smooth Scroll Wrapper */
+        #viewport {
+            overflow: hidden;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+        }
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        /* Hover States for Cursor */
+        body.hovering .cursor-outline {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: transparent;
+            backdrop-filter: blur(2px);
+        }
+        
+        /* Noise Overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .loader-bar {
+            width: 0%;
+            height: 2px;
+            background: var(--primary);
+            margin-top: 20px;
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Project Preview */
+        .project-preview-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40vw;
+            height: 25vw;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            mix-blend-mode: exclusion;
+            overflow: hidden;
+        }
+
+        .preview-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Text Utilities */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            color: transparent;
+            transition: all 0.5s ease;
+        }
+        .group:hover .text-outline {
+            -webkit-text-stroke: 1px var(--primary);
+            color: transparent; 
+        }
+
+        .clip-text-image {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(45deg, #fff, #666);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="text-6xl font-bold font-mono counter text-white">00</div>
+        <div class="w-64 h-[1px] bg-gray-800 mt-4 relative overflow-hidden">
+            <div class="loader-bar absolute top-0 left-0 h-full bg-red-600"></div>
         </div>
-
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <div className="overflow-hidden mb-4">
-            <h2 className="text-red-500 font-bold tracking-[0.5em] text-sm md:text-base uppercase animate-slide-up">
-              Motion Design Studio
-            </h2>
-          </div>
-          <div className="overflow-hidden">
-            <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter uppercase mb-6 leading-none mix-blend-overlay opacity-90 animate-reveal">
-              Absolute<br />Precision
-            </h1>
-          </div>
-          <p className="max-w-md mx-auto text-gray-400 text-sm md:text-base leading-relaxed tracking-wide animate-fade-in delay-300">
-            Crafting high-fidelity motion graphics for the world's most demanding automotive and technology brands.
-          </p>
-
-          <div className="mt-12 animate-fade-in delay-500">
-            <button className="group relative px-8 py-3 bg-white text-black font-bold uppercase tracking-widest text-xs overflow-hidden">
-              <span className="relative z-10 group-hover:text-white transition-colors duration-300">View Showreel</span>
-              <div className="absolute inset-0 bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-            </button>
-          </div>
-        </div>
-
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce duration-[2000ms]">
-          <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-2">Scroll</span>
-          <ChevronDown size={16} className="text-gray-500" />
-        </div>
-      </section>
-
-      {/* Selected Work */}
-      <section id="work" className="py-32 relative bg-[#0a0a0a]">
-        <div className="container mx-auto px-6">
-          <div className="flex items-end justify-between mb-20 border-b border-white/10 pb-6">
-            <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600">
-              Selected Work
-            </h2>
-            <span className="text-xs font-mono text-gray-500 mb-2 hidden md:block">
-              // 2023 — 2025
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-y-24">
-            {projects.map((project, index) => (
-              <div 
-                key={project.id}
-                className={`group relative ${index % 2 !== 0 ? 'md:mt-24' : ''}`}
-                onMouseEnter={() => setActiveVideo(project.id)}
-                onMouseLeave={() => setActiveVideo(null)}
-              >
-                {/* Project Card / Viewport */}
-                <div className="relative aspect-[16/9] bg-gray-900 overflow-hidden border border-white/5 transition-all duration-500 group-hover:border-red-500/50 group-hover:shadow-[0_0_30px_rgba(220,38,38,0.1)]">
-                  
-                  {/* Default Static State (Simulated Thumbnail) */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-20 group-hover:opacity-0 transition-opacity duration-500`}></div>
-                  
-                  {/* "Video" Playback Simulation - CSS Animations */}
-                  <div className={`absolute inset-0 flex items-center justify-center bg-black transition-opacity duration-500 ${activeVideo === project.id ? 'opacity-100' : 'opacity-0'}`}>
-                    
-                    {/* Simulated Reel Content */}
-                    {project.videoType === 'scan' && (
-                      <div className="relative w-full h-full overflow-hidden">
-                        <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,255,255,0.05)_50%)] bg-[length:100%_4px]"></div>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 border-2 border-cyan-500/30 rounded-full animate-[spin_4s_linear_infinite]"></div>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 border border-cyan-500/50 rounded-full animate-[ping_2s_linear_infinite]"></div>
-                        <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.8)] animate-[scan_2s_linear_infinite]"></div>
-                      </div>
-                    )}
-                    
-                    {project.videoType === 'grid' && (
-                      <div className="relative w-full h-full overflow-hidden perspective-1000 bg-emerald-900/10">
-                        <div className="absolute inset-0 grid grid-cols-6 grid-rows-4 gap-1 opacity-20">
-                           {Array(24).fill(0).map((_, i) => (
-                             <div key={i} className="bg-emerald-500/20 animate-pulse" style={{animationDelay: `${i * 0.1}s`}}></div>
-                           ))}
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                           <div className="w-48 h-12 border-x-2 border-emerald-400 flex items-center justify-center">
-                              <span className="font-mono text-emerald-400 text-xs tracking-widest animate-pulse">SYSTEM_LOCKED</span>
-                           </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {project.videoType === 'pulse' && (
-                      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-red-900/10">
-                        <h3 className="text-9xl font-black text-transparent bg-clip-text bg-white stroke-2 opacity-10 absolute scale-150 animate-[pulse_0.5s_ease-in-out_infinite]">RUN</h3>
-                         <div className="absolute w-[200%] h-[20px] bg-red-600 rotate-45 translate-x-[-100%] animate-[slide_1s_linear_infinite]"></div>
-                      </div>
-                    )}
-
-                     {project.videoType === 'orbit' && (
-                      <div className="relative w-full h-full flex items-center justify-center bg-indigo-900/10">
-                         <div className="w-32 h-32 border border-indigo-500/30 rounded-full animate-[spin_8s_linear_infinite] flex items-center justify-center">
-                            <div className="w-20 h-20 border border-indigo-400/50 rotate-45 rounded-sm animate-[spin_4s_linear_infinite_reverse]"></div>
-                         </div>
-                         <div className="absolute w-2 h-2 bg-indigo-400 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-[0_0_20px_rgba(129,140,248,1)]"></div>
-                      </div>
-                    )}
-
-                  </div>
-
-                  {/* Overlay UI */}
-                  <div className="absolute top-6 right-6 z-20 mix-blend-difference">
-                    <span className="font-mono text-xs border border-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
-                      0{index + 1}
-                    </span>
-                  </div>
-                  
-                  <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${activeVideo === project.id ? 'opacity-0' : 'opacity-100'}`}>
-                    <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform duration-500">
-                      <Play size={20} className="ml-1 text-white/80" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Project Info */}
-                <div className="mt-6 flex justify-between items-start">
-                  <div>
-                    <h3 className="text-2xl font-bold uppercase tracking-wide mb-1 group-hover:text-red-500 transition-colors duration-300">
-                      {project.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 font-mono uppercase tracking-widest mb-3">
-                      {project.client} // {project.type}
-                    </p>
-                  </div>
-                  <div className={`transform transition-all duration-300 ${activeVideo === project.id ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`}>
-                    <ArrowRight className="text-red-500" />
-                  </div>
-                </div>
-                <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500 ease-in-out">
-                  <p className="text-sm text-gray-400 mt-2 max-w-sm border-l border-red-500/30 pl-3 leading-relaxed">
-                    {project.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-32 text-center">
-            <a href="#" className="inline-flex items-center space-x-2 text-sm uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors pb-1 border-b border-transparent hover:border-red-500">
-              <span>View All Projects</span>
-              <ExternalLink size={14} />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Philosophy / About */}
-      <section id="studio" className="py-32 bg-white text-black relative">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-4">
-              <h2 className="text-xl font-bold uppercase tracking-widest mb-8 border-l-4 border-black pl-4">
-                The Studio
-              </h2>
-            </div>
-            <div className="lg:col-span-8">
-              <p className="text-3xl md:text-5xl font-bold leading-tight mb-12 tracking-tight">
-                We bridge the gap between cinematic realism and digital interface. Our work is not just seen; it is felt.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm leading-relaxed text-gray-600">
-                <div>
-                  <h4 className="font-bold text-black uppercase tracking-widest mb-4">Approach</h4>
-                  <p>
-                    Every frame is treated as a still photograph. We apply the principles of traditional cinematography—lighting, lens choice, and composition—to the infinite possibilities of the 3D canvas.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-black uppercase tracking-widest mb-4">Capabilities</h4>
-                  <ul className="space-y-2 border-l border-gray-200 pl-4">
-                    <li>3D Motion Design</li>
-                    <li>Automotive Visualization</li>
-                    <li>HMI / UI Design</li>
-                    <li>Event Graphics</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer id="contact" className="py-24 bg-black border-t border-white/10">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end">
-            <div className="mb-12 md:mb-0">
-              <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white/90 mb-6">
-                Let's<br />Create
-              </h2>
-              <a href="mailto:hello@vantage.studio" className="text-xl md:text-2xl text-red-500 font-mono hover:text-white transition-colors">
-                hello@vantage.studio
-              </a>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-12 text-xs uppercase tracking-widest text-gray-500">
-              <div>
-                <h5 className="text-white mb-4">Social</h5>
-                <ul className="space-y-2">
-                  <li className="hover:text-red-500 cursor-pointer transition-colors">Instagram</li>
-                  <li className="hover:text-red-500 cursor-pointer transition-colors">Behance</li>
-                  <li className="hover:text-red-500 cursor-pointer transition-colors">Vimeo</li>
-                </ul>
-              </div>
-              <div>
-                <h5 className="text-white mb-4">Legal</h5>
-                <ul className="space-y-2">
-                  <li className="hover:text-white cursor-pointer">Impressum</li>
-                  <li className="hover:text-white cursor-pointer">Privacy</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-24 pt-8 border-t border-white/5 flex justify-between items-center text-[10px] text-gray-600 uppercase tracking-widest">
-            <span>© 2025 Vantage Motion Studio</span>
-            <span>Mumbai, IN</span>
-          </div>
-        </div>
-      </footer>
-
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes scan {
-          0% { top: 0; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-        @keyframes slide {
-          0% { transform: translateX(-100%) rotate(45deg); }
-          100% { transform: translateX(100%) rotate(45deg); }
-        }
-        @keyframes reveal {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 0.9; transform: translateY(0); }
-        }
-        @keyframes slide-up {
-          0% { transform: translateY(100%); }
-          100% { transform: translateY(0); }
-        }
-        @keyframes fade-in {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-        .rotate-x-60 {
-          transform: rotateX(60deg);
-        }
-        ::selection {
-          background-color: #dc2626;
-          color: white;
-        }
-        html {
-          scroll-behavior: smooth;
-        }
-      `}</style>
     </div>
-  );
-};
 
-export default Portfolio;
+    <!-- Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Noise -->
+    <div class="noise"></div>
+
+    <!-- Fixed Background Canvas for Particles -->
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 opacity-30"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-difference">
+        <a href="#" class="brand text-2xl font-bold tracking-widest hoverable" data-hover-text="HOME">VANTAGE<span class="text-red-600">.</span></a>
+        
+        <div class="hidden md:flex gap-12 text-xs font-bold tracking-[0.2em]">
+            <a href="#work" class="hoverable relative group py-2">
+                WORK
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-red-600 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#studio" class="hoverable relative group py-2">
+                STUDIO
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-red-600 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#contact" class="hoverable relative group py-2">
+                CONTACT
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-red-600 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+        </div>
+        
+        <div class="md:hidden hoverable">
+            <div class="w-8 h-[2px] bg-white mb-2"></div>
+            <div class="w-8 h-[2px] bg-white"></div>
+        </div>
+    </nav>
+
+    <!-- Project Preview (Fixed Center) -->
+    <div class="project-preview-container" id="preview-container">
+        <canvas id="preview-canvas" class="preview-canvas"></canvas>
+    </div>
+
+    <!-- Main Content -->
+    <main id="smooth-wrapper">
+        <div id="smooth-content">
+            
+            <!-- Hero Section -->
+            <section class="min-h-screen flex items-center justify-center relative grid-bg" data-speed="0.5">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505]"></div>
+                
+                <div class="container mx-auto px-6 z-10 text-center">
+                    <p class="text-xs md:text-sm font-mono text-red-600 tracking-[0.5em] mb-4 reveal-text">EST. 2025 // MUMBAI</p>
+                    <h1 class="text-5xl md:text-9xl font-bold leading-none tracking-tighter mix-blend-overlay mb-8">
+                        <div class="overflow-hidden"><span class="block reveal-header">DIGITAL</span></div>
+                        <div class="overflow-hidden"><span class="block reveal-header text-outline hover:text-white transition-colors duration-500">ALCHEMY</span></div>
+                    </h1>
+                    
+                    <div class="flex justify-center mt-12 overflow-hidden">
+                        <div class="reveal-up">
+                            <a href="#work" class="hoverable group relative inline-flex items-center gap-4 px-8 py-4 border border-white/20 hover:border-red-600 transition-colors duration-300 rounded-full overflow-hidden">
+                                <span class="relative z-10 text-xs font-bold tracking-widest">VIEW SHOWREEL</span>
+                                <div class="absolute inset-0 bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decorative Elements -->
+                <div class="absolute bottom-12 left-12 font-mono text-[10px] text-gray-500 hidden md:block">
+                    COORDINATES<br>19.0760° N, 72.8777° E
+                </div>
+                <div class="absolute bottom-12 right-12 font-mono text-[10px] text-gray-500 text-right hidden md:block">
+                    SCROLL<br>FOR IGNITION
+                </div>
+            </section>
+
+            <!-- Work Section -->
+            <section id="work" class="py-32 relative z-20">
+                <div class="container mx-auto px-6">
+                    <div class="mb-24 flex items-end justify-between border-b border-white/10 pb-8">
+                        <h2 class="text-4xl md:text-6xl font-bold text-gray-400">SELECTED<br><span class="text-white">PROJECTS</span></h2>
+                        <span class="font-mono text-xs text-red-600 tracking-widest animate-pulse">LIVE SYSTEM</span>
+                    </div>
+
+                    <div class="projects-list">
+                        <!-- Project 1 -->
+                        <div class="project-item group border-b border-white/10 py-16 relative hoverable" data-type="scan" data-color="#00ffff">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 mix-blend-difference">
+                                <span class="font-mono text-xs text-gray-500 mb-4 md:mb-0">01 // AUTOMOTIVE</span>
+                                <h3 class="text-4xl md:text-8xl font-bold transition-transform duration-500 group-hover:translate-x-8">APEX <span class="text-outline group-hover:text-cyan-400">GT</span></h3>
+                                <span class="hidden md:block text-xs font-bold border border-white/30 px-3 py-1 rounded-full group-hover:bg-white group-hover:text-black transition-all">CGI / VFX</span>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-cyan-900/0 via-cyan-900/0 to-cyan-900/0 group-hover:from-cyan-900/10 group-hover:via-cyan-900/5 transition-all duration-500"></div>
+                        </div>
+
+                        <!-- Project 2 -->
+                        <div class="project-item group border-b border-white/10 py-16 relative hoverable" data-type="noise" data-color="#ff0000">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 mix-blend-difference">
+                                <span class="font-mono text-xs text-gray-500 mb-4 md:mb-0">02 // CYBERNETICS</span>
+                                <h3 class="text-4xl md:text-8xl font-bold transition-transform duration-500 group-hover:translate-x-8">NEURAL <span class="text-outline group-hover:text-red-500">LINK</span></h3>
+                                <span class="hidden md:block text-xs font-bold border border-white/30 px-3 py-1 rounded-full group-hover:bg-white group-hover:text-black transition-all">UI / HUD</span>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-red-900/0 via-red-900/0 to-red-900/0 group-hover:from-red-900/10 group-hover:via-red-900/5 transition-all duration-500"></div>
+                        </div>
+
+                        <!-- Project 3 -->
+                        <div class="project-item group border-b border-white/10 py-16 relative hoverable" data-type="wave" data-color="#ccff00">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 mix-blend-difference">
+                                <span class="font-mono text-xs text-gray-500 mb-4 md:mb-0">03 // SPORTS</span>
+                                <h3 class="text-4xl md:text-8xl font-bold transition-transform duration-500 group-hover:translate-x-8">NIKE <span class="text-outline group-hover:text-lime-400">AIR</span></h3>
+                                <span class="hidden md:block text-xs font-bold border border-white/30 px-3 py-1 rounded-full group-hover:bg-white group-hover:text-black transition-all">KINETIC</span>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-lime-900/0 via-lime-900/0 to-lime-900/0 group-hover:from-lime-900/10 group-hover:via-lime-900/5 transition-all duration-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Marquee Section -->
+            <section class="py-20 overflow-hidden bg-white text-black">
+                <div class="whitespace-nowrap flex overflow-hidden">
+                    <div class="animate-marquee inline-block">
+                        <span class="text-8xl font-bold tracking-tighter mx-8">MOTION</span>
+                        <span class="text-8xl font-bold tracking-tighter mx-8 text-transparent stroke-black" style="-webkit-text-stroke: 2px black;">DIRECTION</span>
+                        <span class="text-8xl font-bold tracking-tighter mx-8">3D ART</span>
+                        <span class="text-8xl font-bold tracking-tighter mx-8 text-transparent stroke-black" style="-webkit-text-stroke: 2px black;">STRATEGY</span>
+                    </div>
+                    <div class="animate-marquee inline-block" aria-hidden="true">
+                        <span class="text-8xl font-bold tracking-tighter mx-8">MOTION</span>
+                        <span class="text-8xl font-bold tracking-tighter mx-8 text-transparent stroke-black" style="-webkit-text-stroke: 2px black;">DIRECTION</span>
+                        <span class="text-8xl font-bold tracking-tighter mx-8">3D ART</span>
+                        <span class="text-8xl font-bold tracking-tighter mx-8 text-transparent stroke-black" style="-webkit-text-stroke: 2px black;">STRATEGY</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About/Footer -->
+            <section id="studio" class="py-32 relative">
+                <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16">
+                    <div>
+                        <h4 class="font-mono text-xs text-red-600 tracking-widest mb-8">THE PHILOSOPHY</h4>
+                        <p class="text-3xl md:text-5xl font-light leading-tight">
+                            We don't just animate.<br>
+                            <span class="font-bold text-white">We engineer emotion.</span>
+                        </p>
+                    </div>
+                    <div class="flex flex-col justify-between">
+                        <p class="text-gray-400 leading-relaxed mb-12">
+                            Operating at the intersection of technical precision and artistic chaos. Our work mimics the physics of the real world while defying its limitations.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-8 text-sm font-bold tracking-widest">
+                            <ul class="space-y-4">
+                                <li class="text-gray-500">SERVICES</li>
+                                <li>ART DIRECTION</li>
+                                <li>MOTION DESIGN</li>
+                                <li>VFX / SIMULATION</li>
+                            </ul>
+                            <ul class="space-y-4">
+                                <li class="text-gray-500">CLIENTS</li>
+                                <li>BMW</li>
+                                <li>APPLE</li>
+                                <li>SONY</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer id="contact" class="pt-32 pb-12 border-t border-white/10 bg-[#050505]">
+                <div class="container mx-auto px-6 text-center">
+                    <a href="mailto:hello@vantage.studio" class="hoverable block text-5xl md:text-9xl font-bold tracking-tighter hover:text-red-600 transition-colors duration-300">
+                        HELLO@<br>VANTAGE
+                    </a>
+                    
+                    <div class="mt-24 flex justify-between items-end text-[10px] font-mono text-gray-500 uppercase">
+                        <div>
+                            &copy; 2025 VANTAGE STUDIO<br>ALL RIGHTS RESERVED
+                        </div>
+                        <div class="text-right">
+                            SCROLL TO TOP
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        // --- 1. SETUP & UTILS ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const hoverables = document.querySelectorAll('.hoverable');
+        
+        // --- 2. PRELOADER ---
+        const tl = gsap.timeline();
+        
+        let count = 0;
+        const counterElement = document.querySelector('.counter');
+        const loaderBar = document.querySelector('.loader-bar');
+        
+        const updateCounter = () => {
+            if (count < 100) {
+                count += Math.floor(Math.random() * 5) + 1;
+                if (count > 100) count = 100;
+                counterElement.textContent = count < 10 ? `0${count}` : count;
+                gsap.to(loaderBar, { width: `${count}%`, duration: 0.1 });
+                requestAnimationFrame(updateCounter);
+            } else {
+                startIntro();
+            }
+        };
+
+        // Artificial delay before counting
+        setTimeout(() => {
+            updateCounter();
+        }, 500);
+
+        function startIntro() {
+            tl.to('.counter', { y: -50, opacity: 0, duration: 0.5, delay: 0.2 })
+              .to('.loader-bar', { height: 0, duration: 0.3 }, "<")
+              .to('.preloader', { yPercent: -100, duration: 1.2, ease: "power4.inOut" })
+              .from('.reveal-header', { y: 100, stagger: 0.1, duration: 1, ease: "power3.out" }, "-=0.5")
+              .from('.reveal-text', { opacity: 0, x: -20, duration: 1 }, "-=0.8")
+              .from('.reveal-up', { y: 20, opacity: 0, duration: 1 }, "-=0.8");
+        }
+
+        // --- 3. CUSTOM CURSOR ---
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with lag
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover effects
+        hoverables.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                document.body.classList.add('hovering');
+                // Magnetic effect could go here
+            });
+            el.addEventListener('mouseleave', () => {
+                document.body.classList.remove('hovering');
+            });
+        });
+
+        // --- 4. PREVIEW CANVAS SYSTEM (Procedural "Video") ---
+        const previewCanvas = document.getElementById('preview-canvas');
+        const ctx = previewCanvas.getContext('2d');
+        const previewContainer = document.getElementById('preview-container');
+        
+        // Resize canvas
+        function resizeCanvas() {
+            previewCanvas.width = previewContainer.offsetWidth;
+            previewCanvas.height = previewContainer.offsetHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let activeProject = null;
+        let animationId;
+        let frame = 0;
+
+        // Visual Generators
+        function drawScan(color) {
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            
+            // Scanline
+            const y = (frame * 5) % previewCanvas.height;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(previewCanvas.width, y);
+            ctx.stroke();
+
+            // Random blocks
+            if (frame % 5 === 0) {
+                const w = Math.random() * 100;
+                const h = Math.random() * 50;
+                const x = Math.random() * previewCanvas.width;
+                const ry = Math.random() * previewCanvas.height;
+                ctx.fillStyle = color; // solid color
+                ctx.globalAlpha = 0.2;
+                ctx.fillRect(x, ry, w, h);
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function drawNoise(color) {
+            // Fading trail
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+            
+            // Random particles
+            for(let i=0; i<50; i++) {
+                const x = Math.random() * previewCanvas.width;
+                const y = Math.random() * previewCanvas.height;
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, 2, 2);
+            }
+
+            // Central circle pulsing
+            const cx = previewCanvas.width / 2;
+            const cy = previewCanvas.height / 2;
+            const r = 50 + Math.sin(frame * 0.1) * 20;
+            
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        }
+
+        function drawWave(color) {
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+            
+            ctx.beginPath();
+            ctx.moveTo(0, previewCanvas.height/2);
+            
+            for(let i=0; i<previewCanvas.width; i+=10) {
+                const y = previewCanvas.height/2 + Math.sin(i * 0.02 + frame * 0.1) * 50;
+                ctx.lineTo(i, y);
+            }
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function animatePreview() {
+            if (!activeProject) return;
+            frame++;
+            
+            if (activeProject === 'scan') drawScan('#00ffff');
+            else if (activeProject === 'noise') drawNoise('#ff0000');
+            else if (activeProject === 'wave') drawWave('#ccff00');
+            
+            animationId = requestAnimationFrame(animatePreview);
+        }
+
+        // Project Hover Listeners
+        const projectItems = document.querySelectorAll('.project-item');
+        
+        projectItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                activeProject = item.dataset.type;
+                
+                // Show container
+                gsap.to(previewContainer, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
+                
+                // Start loop
+                cancelAnimationFrame(animationId);
+                animatePreview();
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                activeProject = null;
+                gsap.to(previewContainer, { opacity: 0, scale: 0.8, duration: 0.3 });
+                ctx.clearRect(0,0, previewCanvas.width, previewCanvas.height);
+            });
+            
+            // Move container slightly with mouse (Parallax)
+            item.addEventListener('mousemove', (e) => {
+                const x = (e.clientX - window.innerWidth/2) * 0.1;
+                const y = (e.clientY - window.innerHeight/2) * 0.1;
+                gsap.to(previewContainer, { x: x, y: y, duration: 0.5 });
+            });
+        });
+
+        // --- 5. BACKGROUND PARTICLES (Subtle) ---
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        
+        function resizeBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
+
+        const particles = [];
+        for(let i=0; i<30; i++) {
+            particles.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                size: Math.random() * 2,
+                speedY: Math.random() * 0.5 + 0.1
+            });
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            bgCtx.fillStyle = "rgba(255,255,255,0.3)";
+            
+            particles.forEach(p => {
+                p.y -= p.speedY;
+                if(p.y < 0) p.y = window.innerHeight;
+                bgCtx.beginPath();
+                bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                bgCtx.fill();
+            });
+            
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        // --- 6. PARALLAX/SCROLL ANIMATIONS ---
+        // Simple parallax for Hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const heroText = document.querySelector('h1');
+            if(heroText) {
+                heroText.style.transform = `translateY(${scrolled * 0.2}px)`;
+            }
+        });
+
+        // Marquee Animation
+        gsap.to(".animate-marquee", {
+            xPercent: -100,
+            repeat: -1,
+            duration: 10,
+            ease: "linear"
+        });
+
+    </script>
+    
+    <style>
+        /* CSS Keyframe for Marquee fallback */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+        }
+    </style>
+</body>
+</html>
